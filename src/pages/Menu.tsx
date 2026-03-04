@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import './Menu.css';
 
 interface Meal {
@@ -15,62 +17,9 @@ interface Meal {
   nutrition: { label: string; value: string }[];
 }
 
-const meals: Meal[] = [
-  {
-    name: 'Beef Lok Lak',
-    description: 'Tender stir-fried beef tossed in a savory pepper-lime sauce, served over fresh greens with steamed rice.',
-    image: '/assets/images/meals/BeefLokLak.jpg',
-    time: '~25 min',
-    prep: '10 min',
-    price: '$6.99',
-    category: 'Cambodian',
-    calories: '620 kcal',
-    difficulty: 'Easy',
-    ingredients: ['Beef sirloin', 'Jasmine rice', 'Lettuce', 'Tomato', 'Onion', 'Lime', 'Black pepper', 'Soy sauce', 'Oyster sauce'],
-    nutrition: [{ label: 'Calories', value: '620 kcal' }, { label: 'Protein', value: '38g' }, { label: 'Carbs', value: '52g' }, { label: 'Fat', value: '22g' }],
-  },
-  {
-    name: 'Korean Bibimbap',
-    description: 'A colorful bowl of warm rice topped with seasoned vegetables, egg, and spicy gochujang sauce.',
-    image: '/assets/images/meals/bibimbapl.jpg',
-    time: '~30 min',
-    prep: '15 min',
-    price: '$7.49',
-    category: 'Korean',
-    calories: '710 kcal',
-    difficulty: 'Medium',
-    ingredients: ['Short-grain rice', 'Egg', 'Carrot', 'Spinach', 'Zucchini', 'Bean sprouts', 'Sesame oil', 'Gochujang paste', 'Sesame seeds'],
-    nutrition: [{ label: 'Calories', value: '710 kcal' }, { label: 'Protein', value: '28g' }, { label: 'Carbs', value: '85g' }, { label: 'Fat', value: '24g' }],
-  },
-  {
-    name: 'Malatang Hot Pot',
-    description: 'A rich, spicy broth loaded with fresh vegetables, noodles, and your choice of protein.',
-    image: '/assets/images/meals/malatangjpg.jpg',
-    time: '~20 min',
-    prep: '10 min',
-    price: '$7.99',
-    category: 'Chinese',
-    calories: '580 kcal',
-    difficulty: 'Easy',
-    ingredients: ['Glass noodles', 'Bok choy', 'Mushrooms', 'Tofu', 'Corn', 'Chili paste', 'Sichuan peppercorn', 'Garlic', 'Ginger'],
-    nutrition: [{ label: 'Calories', value: '580 kcal' }, { label: 'Protein', value: '22g' }, { label: 'Carbs', value: '68g' }, { label: 'Fat', value: '18g' }],
-  },
-  {
-    name: 'Chocolate Brownie Cake',
-    description: 'Fudgy, rich chocolate brownie baked to perfection — a sweet treat to end any meal.',
-    image: '/assets/images/meals/Brownie-Cake.png',
-    time: '~35 min',
-    prep: '10 min',
-    price: '$4.99',
-    category: 'Dessert',
-    calories: '480 kcal',
-    difficulty: 'Easy',
-    ingredients: ['Dark chocolate', 'Butter', 'Sugar', 'Eggs', 'Flour', 'Cocoa powder', 'Vanilla extract', 'Salt'],
-    nutrition: [{ label: 'Calories', value: '480 kcal' }, { label: 'Protein', value: '6g' }, { label: 'Carbs', value: '58g' }, { label: 'Fat', value: '26g' }],
-  },
-];
-
 function Menu() {
+  const convexMeals = useQuery(api.meals.listPublished);
+  const meals: Meal[] = convexMeals ?? [];
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
 
   useEffect(() => {
@@ -116,6 +65,11 @@ function Menu() {
       {/* MEALS GRID               */}
       {/* ======================== */}
       <section className="section menu-section">
+        {convexMeals === undefined ? (
+          <p style={{ textAlign: 'center', color: 'var(--color-text-light)', padding: '3rem 0' }}>Loading menu...</p>
+        ) : meals.length === 0 ? (
+          <p style={{ textAlign: 'center', color: 'var(--color-text-light)', padding: '3rem 0' }}>No meals available yet. Check back soon!</p>
+        ) : (
         <div className="menu-grid-container">
           {meals.map((meal, index) => (
             <div
@@ -138,6 +92,7 @@ function Menu() {
             </div>
           ))}
         </div>
+        )}
       </section>
 
       {/* ======================== */}

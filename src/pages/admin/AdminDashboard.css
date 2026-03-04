@@ -1,0 +1,406 @@
+/* ==============================
+   ADMIN HEADER
+   ============================== */
+.admin-dashboard {
+  min-height: 100vh;
+  background-color: var(--color-bg-soft);
+}
+
+.admin-header {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-header-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.admin-header h1 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.admin-logout-btn {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.admin-logout-btn:hover {
+  background-color: #f3f4f6;
+}
+
+/* ==============================
+   ADMIN MAIN
+   ============================== */
+.admin-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.admin-toolbar h2 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.admin-add-btn {
+  padding: 0.65rem 1.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-add-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.admin-loading,
+.admin-empty {
+  text-align: center;
+  color: var(--color-text-light);
+  padding: 3rem 0;
+  font-size: 1rem;
+}
+
+/* ==============================
+   ADMIN TABLE
+   ============================== */
+.admin-table-wrapper {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 0.85rem 1rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #f0f0f0;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f5f5f5;
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table-img {
+  width: 56px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.admin-table-name {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.admin-status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.admin-status-badge:hover {
+  opacity: 0.85;
+}
+
+.admin-status-badge.published {
+  background-color: var(--color-accent);
+  color: var(--color-primary-dark);
+}
+
+.admin-status-badge.draft {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.admin-action-btn {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.admin-action-btn.edit {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+}
+
+.admin-action-btn.edit:hover {
+  background-color: #dbeafe;
+}
+
+.admin-action-btn.delete {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.admin-action-btn.delete:hover {
+  background-color: #fecaca;
+}
+
+/* ==============================
+   ADMIN MODAL (Create / Edit)
+   ============================== */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.admin-modal {
+  background-color: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-modal-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.admin-modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  font-size: 1.5rem;
+  color: var(--color-text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.admin-modal-close:hover {
+  background-color: #f3f4f6;
+}
+
+.admin-meal-form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.admin-form-row .admin-form-group {
+  flex: 1;
+}
+
+.admin-meal-form .admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.admin-meal-form label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.admin-meal-form input,
+.admin-meal-form textarea,
+.admin-meal-form select {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.92rem;
+  font-family: inherit;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.admin-meal-form input:focus,
+.admin-meal-form textarea:focus,
+.admin-meal-form select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+}
+
+.admin-meal-form textarea {
+  resize: vertical;
+}
+
+.admin-form-check {
+  display: flex;
+  align-items: center;
+}
+
+.admin-form-check label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.admin-form-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+.admin-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+}
+
+.admin-cancel-btn {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  background: none;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.admin-cancel-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.admin-save-btn {
+  padding: 0.65rem 1.5rem;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-save-btn:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* ==============================
+   RESPONSIVE
+   ============================== */
+@media (max-width: 768px) {
+  .admin-main {
+    padding: 1rem;
+  }
+
+  .admin-form-row {
+    flex-direction: column;
+  }
+
+  .admin-modal-overlay {
+    padding: 1rem;
+  }
+
+  .admin-toolbar h2 {
+    font-size: 1.2rem;
+  }
+}
