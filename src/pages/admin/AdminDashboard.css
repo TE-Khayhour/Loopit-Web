@@ -77,6 +77,29 @@
   margin: 0;
 }
 
+.admin-toolbar-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.admin-cat-btn {
+  padding: 0.65rem 1.25rem;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.admin-cat-btn:hover {
+  background-color: #f3f4f6;
+}
+
 .admin-add-btn {
   padding: 0.65rem 1.5rem;
   font-family: var(--font-heading);
@@ -230,7 +253,7 @@
   background-color: #ffffff;
   border-radius: 16px;
   width: 100%;
-  max-width: 600px;
+  max-width: 900px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
@@ -242,6 +265,10 @@
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 10;
 }
 
 .admin-modal-header h3 {
@@ -322,6 +349,156 @@
   resize: vertical;
 }
 
+/* ==============================
+   IMAGE UPLOAD
+   ============================== */
+.admin-image-upload {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.admin-image-preview {
+  width: 160px;
+  height: 110px;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: var(--color-bg-soft);
+  border: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-image-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-image-preview-empty {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.admin-image-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.admin-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--color-accent);
+  border: 1px solid var(--color-primary-light);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+  align-self: flex-start;
+}
+
+.admin-upload-btn:hover {
+  background-color: #c8e6c9;
+}
+
+.admin-upload-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-upload-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+}
+
+/* ==============================
+   DYNAMIC LIST ROWS
+   ============================== */
+.admin-dynamic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-dynamic-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.admin-dynamic-row input {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.88rem;
+  font-family: inherit;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.admin-dynamic-row input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+}
+
+.admin-dynamic-row input.admin-input-sm {
+  flex: 0 0 90px;
+}
+
+.admin-row-remove {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  background-color: #fef2f2;
+  color: #dc2626;
+  font-size: 1.15rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.admin-row-remove:hover {
+  background-color: #fecaca;
+}
+
+.admin-row-add {
+  align-self: flex-start;
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--color-accent);
+  border: 1px dashed var(--color-primary-light);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s;
+}
+
+.admin-row-add:hover {
+  background-color: #c8e6c9;
+}
+
+/* ==============================
+   FORM BOTTOM
+   ============================== */
 .admin-form-check {
   display: flex;
   align-items: center;
@@ -385,6 +562,57 @@
 }
 
 /* ==============================
+   CATEGORY MANAGER
+   ============================== */
+.admin-modal-sm {
+  max-width: 480px;
+}
+
+.admin-cat-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.admin-cat-add {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-cat-add input {
+  flex: 1;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.92rem;
+  font-family: inherit;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.admin-cat-add input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.12);
+}
+
+.admin-cat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-cat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.85rem;
+  background-color: var(--color-bg-soft);
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* ==============================
    RESPONSIVE
    ============================== */
 @media (max-width: 768px) {
@@ -402,5 +630,9 @@
 
   .admin-toolbar h2 {
     font-size: 1.2rem;
+  }
+
+  .admin-dynamic-row input.admin-input-sm {
+    flex: 1;
   }
 }

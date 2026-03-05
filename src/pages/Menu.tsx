@@ -3,6 +3,17 @@ import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import './Menu.css';
 
+interface IngredientItem {
+  name: string;
+  amount: string;
+  unit: string;
+}
+
+interface NutritionItem {
+  label: string;
+  value: string;
+}
+
 interface Meal {
   name: string;
   description: string;
@@ -13,14 +24,27 @@ interface Meal {
   category: string;
   calories: string;
   difficulty: string;
-  ingredients: string[];
-  nutrition: { label: string; value: string }[];
+  serving?: string;
+  allergens?: string;
+  ingredients: IngredientItem[] | string[];
+  notIncluded?: IngredientItem[];
+  utensils?: string[];
+  nutrition: NutritionItem[];
+}
+
+function isStructuredIngredient(item: unknown): item is IngredientItem {
+  return typeof item === 'object' && item !== null && 'name' in item;
 }
 
 function Menu() {
   const convexMeals = useQuery(api.meals.listPublished);
-  const meals: Meal[] = convexMeals ?? [];
+  const convexCategories = useQuery(api.categories.list);
+  const allMeals: Meal[] = convexMeals ?? [];
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  const categoryNames = (convexCategories ?? []).map((c) => c.name);
+  const meals = activeCategory === 'All' ? allMeals : allMeals.filter((m) => m.category === activeCategory);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -50,20 +74,44 @@ function Menu() {
     return () => { document.body.style.overflow = ''; };
   }, [selectedMeal]);
 
+  const renderIngredientGrid = (items: IngredientItem[]) => (
+    <div className="modal-ingredient-grid">
+      {items.map((item, idx) => (
+        <div key={idx} className="modal-ingredient-item">
+          <span className="modal-ingredient-name">{item.name}</span>
+          <span className="modal-ingredient-amount">{item.amount} {item.unit}</span>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="menu-page">
 
-      {/* ======================== */}
-      {/* MENU HERO                */}
-      {/* ======================== */}
+      {/* MENU HERO */}
       <section className="menu-hero">
         <h1>Our Menu</h1>
         <p>Fresh ingredients. Simple recipes. Delivered weekly.</p>
       </section>
 
-      {/* ======================== */}
-      {/* MEALS GRID               */}
-      {/* ======================== */}
+      {/* CATEGORY FILTER */}
+      {categoryNames.length > 0 && (
+        <div className="menu-filter-bar">
+          <div className="menu-filter-container">
+            {['All', ...categoryNames].map((cat) => (
+              <button
+                key={cat}
+                className={`menu-filter-btn ${activeCategory === cat ? 'active' : ''}`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* MEALS GRID */}
       <section className="section menu-section">
         {convexMeals === undefined ? (
           <p style={{ textAlign: 'center', color: 'var(--color-text-light)', padding: '3rem 0' }}>Loading menu...</p>
@@ -95,9 +143,7 @@ function Menu() {
         )}
       </section>
 
-      {/* ======================== */}
-      {/* MEAL DETAIL MODAL        */}
-      {/* ======================== */}
+      {/* MEAL DETAIL MODAL */}
       {selectedMeal && (
         <div className="modal-overlay" onClick={() => setSelectedMeal(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -108,7 +154,7 @@ function Menu() {
               </svg>
             </button>
 
-            {/* Modal image with name overlay */}
+            {/* Hero image */}
             <div className="modal-img-wrapper">
               <img src={selectedMeal.image} alt={selectedMeal.name} className="modal-img" />
               <div className="modal-img-overlay">
@@ -144,28 +190,89 @@ function Menu() {
                 <p>{selectedMeal.description}</p>
               </div>
 
-              {/* Ingredients */}
-              <div className="modal-section">
-                <h3>Ingredients</h3>
-                <ul className="modal-ingredients">
-                  {selectedMeal.ingredients.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Nutrition Facts */}
-              <div className="modal-section">
-                <h3>Nutrition Facts</h3>
-                <div className="modal-nutrition">
-                  {selectedMeal.nutrition.map((n) => (
-                    <div key={n.label} className="modal-nutrition-item">
-                      <span className="modal-nutrition-value">{n.value}</span>
-                      <span className="modal-nutrition-label">{n.label}</span>
-                    </div>
-                  ))}
+              {/* Allergens */}
+              {selectedMeal.allergens && (
+                <div className="modal-section">
+                  <h3>Allergens</h3>
+                  <p className="modal-allergens-names">
+                    {selectedMeal.allergens.split(',').map((a) => a.trim()).join(' \u2022 ')}
+                  </p>
+                  <p className="modal-allergens-disclaimer">
+                    Produced in a facility that processes eggs, milk, fish, peanuts, sesame, shellfish, soy, tree nuts, and wheat.
+                  </p>
                 </div>
-              </div>
+              )}
+
+              {/* Ingredients */}
+              {selectedMeal.ingredients && selectedMeal.ingredients.length > 0 && (
+                <div className="modal-section">
+                  <div className="modal-section-header">
+                    <h3>Ingredients</h3>
+                    {selectedMeal.serving && (
+                      <span className="modal-serving-badge">serving {selectedMeal.serving}</span>
+                    )}
+                  </div>
+                  {isStructuredIngredient(selectedMeal.ingredients[0])
+                    ? renderIngredientGrid(selectedMeal.ingredients as IngredientItem[])
+                    : (
+                      <ul className="modal-ingredients-legacy">
+                        {(selectedMeal.ingredients as string[]).map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    )
+                  }
+                </div>
+              )}
+
+              {/* Not included in delivery */}
+              {selectedMeal.notIncluded && selectedMeal.notIncluded.length > 0 && (
+                <div className="modal-section">
+                  <h3>Not included in your delivery</h3>
+                  {renderIngredientGrid(selectedMeal.notIncluded)}
+                </div>
+              )}
+
+              {/* Utensils */}
+              {selectedMeal.utensils && selectedMeal.utensils.length > 0 && (
+                <div className="modal-section">
+                  <h3>Utensils</h3>
+                  <div className="modal-utensils">
+                    {selectedMeal.utensils.map((u, idx) => (
+                      <span key={idx} className="modal-utensil-item">
+                        {idx > 0 && <span className="modal-utensil-dot">&bull;</span>}
+                        {u}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Nutrition Values */}
+              {selectedMeal.nutrition && selectedMeal.nutrition.length > 0 && (
+                <div className="modal-section">
+                  <h3>Nutrition Values</h3>
+                  <table className="modal-nutrition-table">
+                    <thead>
+                      <tr>
+                        <th>Nutrients</th>
+                        <th>per serving</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedMeal.nutrition.map((n, idx) => (
+                        <tr key={n.label} className={idx % 2 === 0 ? 'even' : ''}>
+                          <td>{n.label}</td>
+                          <td>{n.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <p className="modal-nutrition-disclaimer">
+                    Due to the different suppliers we purchase our products from, nutritional facts per meal can vary from the website to what is received in the delivered box, depending on your region.
+                  </p>
+                </div>
+              )}
 
               {/* Price */}
               <div className="modal-price-row">

@@ -1,6 +1,46 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const getStorageUrl = mutation({
+  args: { storageId: v.id("_storage") },
+  handler: async (ctx, args) => {
+    return await ctx.storage.getUrl(args.storageId);
+  },
+});
+
+const ingredientItem = v.object({
+  name: v.string(),
+  amount: v.string(),
+  unit: v.string(),
+});
+const nutritionItem = v.object({ label: v.string(), value: v.string() });
+
+const mealFields = {
+  name: v.string(),
+  description: v.string(),
+  image: v.string(),
+  time: v.string(),
+  prep: v.string(),
+  price: v.string(),
+  category: v.string(),
+  calories: v.string(),
+  difficulty: v.string(),
+  serving: v.string(),
+  allergens: v.string(),
+  ingredients: v.array(ingredientItem),
+  notIncluded: v.array(ingredientItem),
+  utensils: v.array(v.string()),
+  nutrition: v.array(nutritionItem),
+  published: v.boolean(),
+};
+
 export const listPublished = query({
   args: {},
   handler: async (ctx) => {
@@ -19,41 +59,14 @@ export const listAll = query({
 });
 
 export const create = mutation({
-  args: {
-    name: v.string(),
-    description: v.string(),
-    image: v.string(),
-    time: v.string(),
-    prep: v.string(),
-    price: v.string(),
-    category: v.string(),
-    calories: v.string(),
-    difficulty: v.string(),
-    ingredients: v.array(v.string()),
-    nutrition: v.array(v.object({ label: v.string(), value: v.string() })),
-    published: v.boolean(),
-  },
+  args: mealFields,
   handler: async (ctx, args) => {
     return await ctx.db.insert("meals", args);
   },
 });
 
 export const update = mutation({
-  args: {
-    id: v.id("meals"),
-    name: v.string(),
-    description: v.string(),
-    image: v.string(),
-    time: v.string(),
-    prep: v.string(),
-    price: v.string(),
-    category: v.string(),
-    calories: v.string(),
-    difficulty: v.string(),
-    ingredients: v.array(v.string()),
-    nutrition: v.array(v.object({ label: v.string(), value: v.string() })),
-    published: v.boolean(),
-  },
+  args: { id: v.id("meals"), ...mealFields },
   handler: async (ctx, args) => {
     const { id, ...fields } = args;
     await ctx.db.patch(id, fields);

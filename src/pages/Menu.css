@@ -22,6 +22,52 @@
 }
 
 /* ==============================
+   CATEGORY FILTER BAR
+   ============================== */
+.menu-filter-bar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 1rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.menu-filter-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.menu-filter-btn {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1px solid #e0e0e0;
+  border-radius: 50px;
+  background-color: #ffffff;
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.menu-filter-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.menu-filter-btn.active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* ==============================
    MENU SECTION
    ============================== */
 .menu-section {
@@ -174,7 +220,7 @@
   border-radius: 16px;
   overflow: hidden;
   width: 100%;
-  max-width: 520px;
+  max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -283,7 +329,7 @@
 
 /* Modal sections */
 .modal-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .modal-section h3 {
@@ -301,8 +347,69 @@
   margin: 0;
 }
 
-/* Ingredients list */
-.modal-ingredients {
+/* Section header with serving badge */
+.modal-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.modal-section-header h3 {
+  margin-bottom: 0;
+}
+
+.modal-serving-badge {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  font-style: italic;
+}
+
+/* ==============================
+   ALLERGENS
+   ============================== */
+.modal-allergens-names {
+  font-weight: 700;
+  color: var(--color-text) !important;
+  margin-bottom: 0.35rem !important;
+}
+
+.modal-allergens-disclaimer {
+  font-size: 0.85rem !important;
+  color: var(--color-text-light);
+}
+
+/* ==============================
+   INGREDIENTS GRID (HelloFresh style)
+   ============================== */
+.modal-ingredient-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.modal-ingredient-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-ingredient-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--color-text);
+}
+
+.modal-ingredient-amount {
+  font-size: 0.82rem;
+  color: var(--color-text-light);
+  margin-top: 0.1rem;
+}
+
+/* Legacy pill-style ingredients (for old data) */
+.modal-ingredients-legacy {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -311,7 +418,7 @@
   gap: 0.5rem;
 }
 
-.modal-ingredients li {
+.modal-ingredients-legacy li {
   background-color: var(--color-bg-soft);
   color: var(--color-text);
   font-size: 0.85rem;
@@ -321,36 +428,71 @@
   border: 1px solid #eaeaea;
 }
 
-/* Nutrition Facts */
-.modal-nutrition {
+/* ==============================
+   UTENSILS
+   ============================== */
+.modal-utensils {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: var(--color-text);
 }
 
-.modal-nutrition-item {
-  flex: 1;
-  text-align: center;
-  background-color: var(--color-bg-soft);
-  border-radius: 10px;
-  padding: 0.75rem 0.5rem;
-}
-
-.modal-nutrition-value {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 0.15rem;
-}
-
-.modal-nutrition-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 500;
+.modal-utensil-dot {
+  margin: 0 0.4rem;
   color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+}
+
+/* ==============================
+   NUTRITION TABLE (HelloFresh style)
+   ============================== */
+.modal-nutrition-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.modal-nutrition-table thead th {
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.modal-nutrition-table thead th:last-child {
+  text-align: right;
+}
+
+.modal-nutrition-table tbody td {
+  padding: 0.6rem 0.85rem;
+  color: var(--color-text);
+  font-weight: 500;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-nutrition-table tbody td:last-child {
+  text-align: right;
+  font-weight: 600;
+}
+
+.modal-nutrition-table tbody tr.even {
+  background-color: var(--color-bg-soft);
+}
+
+.modal-nutrition-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.modal-nutrition-disclaimer {
+  margin-top: 0.75rem !important;
+  font-size: 0.8rem !important;
+  color: var(--color-text-light);
+  line-height: 1.5 !important;
 }
 
 /* Price row */
@@ -410,6 +552,19 @@
   }
 
   .modal-stat-value {
+    font-size: 0.82rem;
+  }
+
+  .modal-ingredient-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-filter-bar {
+    padding: 0.75rem 1rem;
+  }
+
+  .menu-filter-btn {
+    padding: 0.4rem 1rem;
     font-size: 0.82rem;
   }
 }
