@@ -1,8 +1,47 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import './Home.css';
+import './Menu.css';
+
+interface IngredientItem { name: string; amount: string; unit: string; }
+interface NutritionItem { label: string; value: string; }
+interface Meal {
+  name: string; description: string; image: string; time: string; prep: string;
+  price: string; category: string; calories: string; difficulty: string;
+  serving?: string; ingredients: IngredientItem[] | string[];
+  notIncluded?: IngredientItem[]; utensils?: string[]; nutrition: NutritionItem[];
+}
+
+function isStructuredIngredient(item: unknown): item is IngredientItem {
+  return typeof item === 'object' && item !== null && 'name' in item;
+}
 
 function Home() {
+  const featuredMeals = useQuery(api.meals.listFeatured);
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+
+  useEffect(() => {
+    if (selectedMeal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [selectedMeal]);
+
+  const renderIngredientGrid = (items: IngredientItem[]) => (
+    <div className="modal-ingredient-grid">
+      {items.map((item, idx) => (
+        <div key={idx} className="modal-ingredient-item">
+          <span className="modal-ingredient-name">{item.name}</span>
+          <span className="modal-ingredient-amount">{item.amount} {item.unit}</span>
+        </div>
+      ))}
+    </div>
+  );
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -20,7 +59,7 @@ function Home() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [featuredMeals]);
 
   return (
     <div className="home-page">
@@ -162,58 +201,35 @@ function Home() {
           <span className="section-accent" />
         </div>
         <div className="section-container meals-grid">
-          <div className="meal-card animate-on-scroll delay-1">
-            <div className="meal-img-wrapper">
-              <img src="/assets/images/meals/BeefLokLak.jpg" alt="Beef Lok Lak" className="meal-img" />
-            </div>
-            <div className="meal-info">
-              <h3>Beef Lok Lak</h3>
-              <p>Tender stir-fried beef tossed in a savory pepper-lime sauce, served over fresh greens with steamed rice.</p>
-              <div className="meal-meta">
-                <span className="meal-tag">~25 min</span>
-                <span className="meal-price">$6.99</span>
+          {featuredMeals && featuredMeals.length > 0 ? (
+            featuredMeals.map((meal, index) => (
+              <div key={meal._id} className={`meal-card animate-on-scroll delay-${(index % 4) + 1}`} style={{ cursor: 'pointer' }} onClick={() => setSelectedMeal(meal as unknown as Meal)}>
+                <div className="meal-img-wrapper">
+                  <img src={meal.image} alt={meal.name} className="meal-img" />
+                  <span className="meal-card-category">{meal.category}</span>
+                  {meal.difficulty && (
+                    <span className={`meal-card-difficulty ${meal.difficulty.toLowerCase()}`}>{meal.difficulty}</span>
+                  )}
+                </div>
+                <div className="meal-info">
+                  <h3>{meal.name}</h3>
+                  <p className="meal-desc-truncate">{meal.description}</p>
+                  <span className="meal-readmore">Read more</span>
+                  <div className="meal-meta">
+                    <span className="meal-tag">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      {meal.time}
+                    </span>
+                    <span className="meal-price">{meal.price}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="meal-card animate-on-scroll delay-2">
-            <div className="meal-img-wrapper">
-              <img src="/assets/images/meals/bibimbapl.jpg" alt="Korean Bibimbap" className="meal-img" />
-            </div>
-            <div className="meal-info">
-              <h3>Korean Bibimbap</h3>
-              <p>A colorful bowl of warm rice topped with seasoned vegetables, egg, and spicy gochujang sauce.</p>
-              <div className="meal-meta">
-                <span className="meal-tag">~30 min</span>
-                <span className="meal-price">$7.49</span>
-              </div>
-            </div>
-          </div>
-          <div className="meal-card animate-on-scroll delay-3">
-            <div className="meal-img-wrapper">
-              <img src="/assets/images/meals/malatangjpg.jpg" alt="Malatang Hot Pot" className="meal-img" />
-            </div>
-            <div className="meal-info">
-              <h3>Malatang Hot Pot</h3>
-              <p>A rich, spicy broth loaded with fresh vegetables, noodles, and your choice of protein.</p>
-              <div className="meal-meta">
-                <span className="meal-tag">~20 min</span>
-                <span className="meal-price">$7.99</span>
-              </div>
-            </div>
-          </div>
-          <div className="meal-card animate-on-scroll delay-4">
-            <div className="meal-img-wrapper">
-              <img src="/assets/images/meals/Brownie-Cake.png" alt="Chocolate Brownie Cake" className="meal-img" />
-            </div>
-            <div className="meal-info">
-              <h3>Chocolate Brownie Cake</h3>
-              <p>Fudgy, rich chocolate brownie baked to perfection — a sweet treat to end any meal.</p>
-              <div className="meal-meta">
-                <span className="meal-tag">~35 min</span>
-                <span className="meal-price">$4.99</span>
-              </div>
-            </div>
-          </div>
+            ))
+          ) : featuredMeals === undefined ? (
+            <p style={{ textAlign: 'center', color: 'var(--color-text-light)', padding: '2rem 0', gridColumn: '1 / -1' }}>Loading...</p>
+          ) : (
+            <p style={{ textAlign: 'center', color: 'var(--color-text-light)', padding: '2rem 0', gridColumn: '1 / -1' }}>No featured meals yet.</p>
+          )}
         </div>
         <div className="meals-cta animate-on-scroll">
           <Link to="/menu" className="btn btn-primary">View More Menu</Link>
@@ -236,6 +252,122 @@ function Home() {
           </Link>
         </div>
       </section>
+
+      {/* MEAL DETAIL MODAL */}
+      {selectedMeal && (
+        <div className="modal-overlay" onClick={() => setSelectedMeal(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setSelectedMeal(null)} aria-label="Close">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <div className="modal-img-wrapper">
+              <img src={selectedMeal.image} alt={selectedMeal.name} className="modal-img" />
+              <div className="modal-img-overlay">
+                <h2 className="modal-title">{selectedMeal.name}</h2>
+                <p className="modal-subtitle">{selectedMeal.category}</p>
+              </div>
+            </div>
+
+            <div className="modal-body">
+              <div className="modal-stats">
+                <div className="modal-stat">
+                  <span className="modal-stat-label">Total</span>
+                  <span className="modal-stat-value">{selectedMeal.time}</span>
+                </div>
+                <div className="modal-stat">
+                  <span className="modal-stat-label">Prep</span>
+                  <span className="modal-stat-value">{selectedMeal.prep}</span>
+                </div>
+                <div className="modal-stat">
+                  <span className="modal-stat-label">Calories</span>
+                  <span className="modal-stat-value">{selectedMeal.calories}</span>
+                </div>
+                <div className="modal-stat">
+                  <span className="modal-stat-label">Difficulty</span>
+                  <span className="modal-stat-value">{selectedMeal.difficulty}</span>
+                </div>
+              </div>
+
+              <div className="modal-section">
+                <h3>Description</h3>
+                <p>{selectedMeal.description}</p>
+              </div>
+
+              {selectedMeal.ingredients && selectedMeal.ingredients.length > 0 && (
+                <div className="modal-section">
+                  <div className="modal-section-header">
+                    <h3>Ingredients</h3>
+                    {selectedMeal.serving && (
+                      <span className="modal-serving-badge">serving {selectedMeal.serving}</span>
+                    )}
+                  </div>
+                  {isStructuredIngredient(selectedMeal.ingredients[0])
+                    ? renderIngredientGrid(selectedMeal.ingredients as IngredientItem[])
+                    : (
+                      <ul className="modal-ingredients-legacy">
+                        {(selectedMeal.ingredients as string[]).map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    )
+                  }
+                </div>
+              )}
+
+              {selectedMeal.notIncluded && selectedMeal.notIncluded.length > 0 && (
+                <div className="modal-section">
+                  <h3>Not included in your delivery</h3>
+                  {renderIngredientGrid(selectedMeal.notIncluded)}
+                </div>
+              )}
+
+              {selectedMeal.utensils && selectedMeal.utensils.length > 0 && (
+                <div className="modal-section">
+                  <h3>Utensils</h3>
+                  <div className="modal-utensils">
+                    {selectedMeal.utensils.map((u, idx) => (
+                      <span key={idx} className="modal-utensil-item">
+                        {idx > 0 && <span className="modal-utensil-dot">&bull;</span>}
+                        {u}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selectedMeal.nutrition && selectedMeal.nutrition.length > 0 && (
+                <div className="modal-section">
+                  <h3>Nutrition Values</h3>
+                  <table className="modal-nutrition-table">
+                    <thead>
+                      <tr>
+                        <th>Nutrients</th>
+                        <th>per serving</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedMeal.nutrition.map((n, idx) => (
+                        <tr key={n.label} className={idx % 2 === 0 ? 'even' : ''}>
+                          <td>{n.label}</td>
+                          <td>{n.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <div className="modal-price-row">
+                <span className="modal-price">{selectedMeal.price}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

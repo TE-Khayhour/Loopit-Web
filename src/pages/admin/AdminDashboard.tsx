@@ -13,7 +13,8 @@ interface IngredientRow {
 
 interface NutritionRow {
   label: string;
-  value: string;
+  amount: string;
+  unit: string;
 }
 
 interface MealForm {
@@ -27,7 +28,6 @@ interface MealForm {
   calories: string;
   difficulty: string;
   serving: string;
-  allergens: string;
   ingredients: IngredientRow[];
   notIncluded: IngredientRow[];
   utensils: string[];
@@ -35,17 +35,6 @@ interface MealForm {
   published: boolean;
 }
 
-const defaultNutrition: NutritionRow[] = [
-  { label: 'Calories', value: '' },
-  { label: 'Fat', value: '' },
-  { label: 'Saturated Fat', value: '' },
-  { label: 'Carbohydrate', value: '' },
-  { label: 'Sugar', value: '' },
-  { label: 'Dietary Fiber', value: '' },
-  { label: 'Protein', value: '' },
-  { label: 'Cholesterol', value: '' },
-  { label: 'Sodium', value: '' },
-];
 
 const emptyForm: MealForm = {
   name: '',
@@ -58,11 +47,10 @@ const emptyForm: MealForm = {
   calories: '',
   difficulty: 'Easy',
   serving: '',
-  allergens: '',
   ingredients: [{ name: '', amount: '', unit: '' }],
   notIncluded: [{ name: '', amount: '', unit: '' }],
   utensils: [''],
-  nutrition: defaultNutrition.map((n) => ({ ...n })),
+  nutrition: [{ label: '', amount: '', unit: '' }],
   published: false,
 };
 
@@ -72,6 +60,7 @@ function AdminDashboard() {
   const createMeal = useMutation(api.meals.create);
   const updateMeal = useMutation(api.meals.update);
   const togglePublished = useMutation(api.meals.togglePublished);
+  const toggleFeatured = useMutation(api.meals.toggleFeatured);
   const removeMeal = useMutation(api.meals.remove);
 
   const categories = useQuery(api.categories.list);
@@ -88,6 +77,31 @@ function AdminDashboard() {
 
   const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
+
+  const hasFormData = () => {
+    return (
+      form.name.trim() !== '' ||
+      form.description.trim() !== '' ||
+      form.image.trim() !== '' ||
+      form.price.trim() !== '' ||
+      form.time.trim() !== '' ||
+      form.calories.trim() !== '' ||
+      form.serving.trim() !== '' ||
+      form.ingredients.some((i) => i.name.trim() !== '')
+    );
+  };
+
+  const confirmClose = () => {
+    if (hasFormData()) {
+      if (window.confirm('You have unsaved changes. Are you sure you want to close?')) {
+        setShowForm(false);
+        setEditingId(null);
+      }
+    } else {
+      setShowForm(false);
+      setEditingId(null);
+    }
+  };
 
   const handleLogout = () => {
     sessionStorage.removeItem('loopit-admin');
@@ -113,7 +127,7 @@ function AdminDashboard() {
 
   const openCreate = () => {
     setEditingId(null);
-    setForm({ ...emptyForm, ingredients: [{ name: '', amount: '', unit: '' }], notIncluded: [{ name: '', amount: '', unit: '' }], utensils: [''], nutrition: defaultNutrition.map((n) => ({ ...n })) });
+    setForm({ ...emptyForm });
     setShowForm(true);
   };
 
@@ -122,23 +136,28 @@ function AdminDashboard() {
     const ing = (meal.ingredients ?? []) as IngredientRow[];
     const notInc = (meal.notIncluded ?? []) as IngredientRow[];
     const uten = (meal.utensils ?? []) as string[];
-    const nutr = (meal.nutrition ?? []) as NutritionRow[];
+    const rawNutr = (meal.nutrition ?? []) as { label: string; value?: string; amount?: string; unit?: string }[];
+    const nutr: NutritionRow[] = rawNutr.map((n) => {
+      if (n.amount !== undefined) return { label: n.label, amount: n.amount, unit: n.unit ?? '' };
+      const parts = (n.value ?? '').match(/^([\d.,]+)\s*(.*)$/);
+      return { label: n.label, amount: parts?.[1] ?? n.value ?? '', unit: parts?.[2] ?? '' };
+    });
+    const stripUnit = (val: string, unit: string) => val.replace(unit, '').replace('$', '').trim();
     setForm({
       name: meal.name,
       description: meal.description,
       image: meal.image,
-      time: meal.time,
-      prep: meal.prep,
-      price: meal.price,
+      time: stripUnit(meal.time, 'min'),
+      prep: stripUnit(meal.prep, 'min'),
+      price: stripUnit(meal.price, '$'),
       category: meal.category,
-      calories: meal.calories,
+      calories: stripUnit(meal.calories, 'kcal'),
       difficulty: meal.difficulty,
-      serving: (meal as any).serving ?? '',
-      allergens: (meal as any).allergens ?? '',
+      serving: stripUnit((meal as any).serving ?? '', 'people'),
       ingredients: ing.length > 0 ? ing : [{ name: '', amount: '', unit: '' }],
       notIncluded: notInc.length > 0 ? notInc : [{ name: '', amount: '', unit: '' }],
       utensils: uten.length > 0 ? uten : [''],
-      nutrition: nutr.length > 0 ? nutr : defaultNutrition.map((n) => ({ ...n })),
+      nutrition: nutr.length > 0 ? nutr : [{ label: '', amount: '', unit: '' }],
       published: meal.published,
     });
     setShowForm(true);
@@ -146,22 +165,29 @@ function AdminDashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const fmtPrice = form.price.startsWith('$') ? form.price : `$${form.price}`;
+    const fmtTime = form.time.includes('min') ? form.time : `${form.time} min`;
+    const fmtPrep = form.prep.includes('min') ? form.prep : `${form.prep} min`;
+    const fmtCal = form.calories.includes('kcal') ? form.calories : `${form.calories} kcal`;
+    const fmtServing = form.serving.includes('people') ? form.serving : `${form.serving} people`;
+
     const payload = {
       name: form.name,
       description: form.description,
       image: form.image,
-      time: form.time,
-      prep: form.prep,
-      price: form.price,
+      time: fmtTime,
+      prep: fmtPrep,
+      price: fmtPrice,
       category: form.category,
-      calories: form.calories,
+      calories: fmtCal,
       difficulty: form.difficulty,
-      serving: form.serving,
-      allergens: form.allergens,
+      serving: fmtServing,
       ingredients: form.ingredients.filter((i) => i.name.trim()),
       notIncluded: form.notIncluded.filter((i) => i.name.trim()),
       utensils: form.utensils.filter((u) => u.trim()),
-      nutrition: form.nutrition.filter((n) => n.value.trim()),
+      nutrition: form.nutrition
+        .filter((n) => n.label.trim())
+        .map((n) => ({ label: n.label, value: `${n.amount} ${n.unit}`.trim() })),
       published: form.published,
     };
 
@@ -211,7 +237,7 @@ function AdminDashboard() {
     setForm({ ...form, nutrition: arr });
   };
   const addNutrition = () => {
-    setForm({ ...form, nutrition: [...form.nutrition, { label: '', value: '' }] });
+    setForm({ ...form, nutrition: [...form.nutrition, { label: '', amount: '', unit: '' }] });
   };
   const removeNutrition = (idx: number) => {
     setForm({ ...form, nutrition: form.nutrition.filter((_, i) => i !== idx) });
@@ -295,6 +321,7 @@ function AdminDashboard() {
                   <th>Time</th>
                   <th>Serving</th>
                   <th>Status</th>
+                  <th>Featured</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -316,6 +343,14 @@ function AdminDashboard() {
                       </button>
                     </td>
                     <td>
+                      <button
+                        className={`admin-status-badge ${(meal as any).featured ? 'featured' : 'not-featured'}`}
+                        onClick={() => toggleFeatured({ id: meal._id })}
+                      >
+                        {(meal as any).featured ? 'Yes' : 'No'}
+                      </button>
+                    </td>
+                    <td>
                       <div className="admin-actions">
                         <button className="admin-action-btn edit" onClick={() => openEdit(meal)}>Edit</button>
                         <button className="admin-action-btn delete" onClick={() => handleDelete(meal._id)}>Delete</button>
@@ -331,11 +366,11 @@ function AdminDashboard() {
 
       {/* Create / Edit modal */}
       {showForm && (
-        <div className="admin-modal-overlay" onClick={() => setShowForm(false)}>
+        <div className="admin-modal-overlay" onClick={confirmClose}>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <div className="admin-modal-header">
               <h3>{editingId ? 'Edit Meal' : 'Add New Meal'}</h3>
-              <button className="admin-modal-close" onClick={() => setShowForm(false)}>×</button>
+              <button className="admin-modal-close" onClick={confirmClose}>×</button>
             </div>
             <form onSubmit={handleSubmit} className="admin-meal-form">
 
@@ -402,22 +437,34 @@ function AdminDashboard() {
               <div className="admin-form-row">
                 <div className="admin-form-group">
                   <label>Price</label>
-                  <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="$6.99" required />
+                  <div className="admin-input-unit">
+                    <span className="admin-unit-prefix">$</span>
+                    <input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Price" required />
+                  </div>
                 </div>
                 <div className="admin-form-group">
                   <label>Total Time</label>
-                  <input value={form.time} onChange={(e) => setForm({ ...form, time: e.target.value })} placeholder="30 min" required />
+                  <div className="admin-input-unit">
+                    <input value={form.time} onChange={(e) => setForm({ ...form, time: e.target.value })} placeholder="Total" required />
+                    <span className="admin-unit-suffix">min</span>
+                  </div>
                 </div>
                 <div className="admin-form-group">
                   <label>Prep Time</label>
-                  <input value={form.prep} onChange={(e) => setForm({ ...form, prep: e.target.value })} placeholder="10 min" required />
+                  <div className="admin-input-unit">
+                    <input value={form.prep} onChange={(e) => setForm({ ...form, prep: e.target.value })} placeholder="Prep" required />
+                    <span className="admin-unit-suffix">min</span>
+                  </div>
                 </div>
               </div>
 
               <div className="admin-form-row">
                 <div className="admin-form-group">
                   <label>Calories</label>
-                  <input value={form.calories} onChange={(e) => setForm({ ...form, calories: e.target.value })} placeholder="820 kcal" required />
+                  <div className="admin-input-unit">
+                    <input value={form.calories} onChange={(e) => setForm({ ...form, calories: e.target.value })} placeholder="Calories" required />
+                    <span className="admin-unit-suffix">kcal</span>
+                  </div>
                 </div>
                 <div className="admin-form-group">
                   <label>Difficulty</label>
@@ -429,14 +476,11 @@ function AdminDashboard() {
                 </div>
                 <div className="admin-form-group">
                   <label>Serving</label>
-                  <input value={form.serving} onChange={(e) => setForm({ ...form, serving: e.target.value })} placeholder="2 people" required />
+                  <div className="admin-input-unit">
+                    <input value={form.serving} onChange={(e) => setForm({ ...form, serving: e.target.value })} placeholder="Serving" required />
+                    <span className="admin-unit-suffix">people</span>
+                  </div>
                 </div>
-              </div>
-
-              {/* Allergens */}
-              <div className="admin-form-group">
-                <label>Allergens</label>
-                <input value={form.allergens} onChange={(e) => setForm({ ...form, allergens: e.target.value })} placeholder="Milk, Wheat" />
               </div>
 
               {/* Ingredients */}
@@ -465,8 +509,9 @@ function AdminDashboard() {
                 <div className="admin-dynamic-list">
                   {form.nutrition.map((item, idx) => (
                     <div key={idx} className="admin-dynamic-row">
-                      <input placeholder="Nutrient" value={item.label} onChange={(e) => updateNutrition(idx, 'label', e.target.value)} />
-                      <input placeholder="Value (e.g. 38g)" value={item.value} onChange={(e) => updateNutrition(idx, 'value', e.target.value)} className="admin-input-sm" />
+                      <input placeholder="Name" value={item.label} onChange={(e) => updateNutrition(idx, 'label', e.target.value)} />
+                      <input placeholder="Amount" value={item.amount} onChange={(e) => updateNutrition(idx, 'amount', e.target.value)} className="admin-input-sm" />
+                      <input placeholder="Unit" value={item.unit} onChange={(e) => updateNutrition(idx, 'unit', e.target.value)} className="admin-input-sm" />
                       <button type="button" className="admin-row-remove" onClick={() => removeNutrition(idx)} title="Remove">×</button>
                     </div>
                   ))}
@@ -483,7 +528,7 @@ function AdminDashboard() {
               </div>
 
               <div className="admin-form-actions">
-                <button type="button" className="admin-cancel-btn" onClick={() => setShowForm(false)}>Cancel</button>
+                <button type="button" className="admin-cancel-btn" onClick={confirmClose}>Cancel</button>
                 <button type="submit" className="admin-save-btn">{editingId ? 'Save Changes' : 'Create Meal'}</button>
               </div>
             </form>

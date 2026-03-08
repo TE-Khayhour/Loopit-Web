@@ -33,12 +33,12 @@ const mealFields = {
   calories: v.string(),
   difficulty: v.string(),
   serving: v.string(),
-  allergens: v.string(),
   ingredients: v.array(ingredientItem),
   notIncluded: v.array(ingredientItem),
   utensils: v.array(v.string()),
   nutrition: v.array(nutritionItem),
   published: v.boolean(),
+  featured: v.optional(v.boolean()),
 };
 
 export const listPublished = query({
@@ -70,6 +70,31 @@ export const update = mutation({
   handler: async (ctx, args) => {
     const { id, ...fields } = args;
     await ctx.db.patch(id, fields);
+  },
+});
+
+export const listFeatured = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db
+      .query("meals")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("published"), true),
+          q.eq(q.field("featured"), true)
+        )
+      )
+      .collect();
+  },
+});
+
+export const toggleFeatured = mutation({
+  args: { id: v.id("meals") },
+  handler: async (ctx, args) => {
+    const meal = await ctx.db.get(args.id);
+    if (meal) {
+      await ctx.db.patch(args.id, { featured: !(meal.featured ?? false) });
+    }
   },
 });
 

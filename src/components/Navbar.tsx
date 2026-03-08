@@ -9,15 +9,24 @@ const homeSections = [
   { id: 'featured-meals', label: 'Featured Meals' },
 ];
 
+const aboutSections = [
+  { id: 'our-values', label: 'Our Values' },
+  { id: 'our-meal-kits', label: 'Our Meal Kits' },
+  { id: 'meet-our-team', label: 'Meet Our Team' },
+  { id: 'partner-with-us', label: 'Partner With Us' },
+];
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [aboutDropdownOpen, setAboutDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   const closeMenu = () => {
     setMenuOpen(false);
     setDropdownOpen(false);
+    setAboutDropdownOpen(false);
   };
 
   const scrollToSection = (id: string) => {
@@ -26,6 +35,18 @@ function Navbar() {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     } else {
       navigate('/');
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
+  const scrollToAboutSection = (id: string) => {
+    closeMenu();
+    if (location.pathname === '/about') {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/about');
       setTimeout(() => {
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
@@ -99,10 +120,39 @@ function Navbar() {
               ))}
             </ul>
           </li>
-          <li>
-            <NavLink to="/about" onClick={closeMenu}>
+          <li
+            className="has-dropdown"
+            onMouseEnter={() => setAboutDropdownOpen(true)}
+            onMouseLeave={() => setAboutDropdownOpen(false)}
+          >
+            <button
+              className={`nav-link-btn ${location.pathname === '/about' ? 'active' : ''}`}
+              onClick={() => { closeMenu(); navigate('/about'); if (location.pathname === '/about') window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            >
               About Us
-            </NavLink>
+              <svg
+                className={`dropdown-arrow ${aboutDropdownOpen ? 'open' : ''}`}
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <ul className={`dropdown ${aboutDropdownOpen ? 'show' : ''}`}>
+              {aboutSections.map((s) => (
+                <li key={s.id}>
+                  <button className="dropdown-link" onClick={() => scrollToAboutSection(s.id)}>
+                    {s.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </li>
           <li>
             <NavLink to="/menu" onClick={closeMenu}>

@@ -398,8 +398,9 @@
 }
 
 .meal-img-wrapper {
+  position: relative;
   width: 100%;
-  height: 200px;
+  height: 220px;
   overflow: hidden;
 }
 
@@ -415,36 +416,90 @@
   transform: scale(1.06);
 }
 
+.meal-card-category {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.85rem;
+  border-radius: 50px;
+}
+
+.meal-card-difficulty {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.7rem;
+  border-radius: 50px;
+  color: #ffffff;
+}
+
+.meal-card-difficulty.easy { background-color: #27ae60; }
+.meal-card-difficulty.medium { background-color: #f39c12; }
+.meal-card-difficulty.hard { background-color: #e74c3c; }
+
 .meal-info {
-  padding: 1.25rem;
+  padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
 .meal-info h3 {
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: var(--color-text);
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.35rem;
 }
 
-.meal-info p {
+.meal-desc-truncate {
   color: var(--color-text-light);
   font-size: 0.88rem;
   line-height: 1.6;
-  margin: 0 0 1rem;
-  flex: 1;
+  margin: 0 0 0.3rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meal-readmore {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 0.75rem;
+  transition: color 0.2s;
+}
+
+.meal-readmore:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
 }
 
 .meal-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f0f0f0;
 }
 
 .meal-tag {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   background-color: var(--color-accent);
   color: var(--color-primary-dark);
   font-size: 0.78rem;

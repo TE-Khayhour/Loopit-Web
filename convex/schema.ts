@@ -16,7 +16,7 @@ export default defineSchema({
     calories: v.string(),
     difficulty: v.string(),
     serving: v.string(),
-    allergens: v.string(),
+    allergens: v.optional(v.string()),
     ingredients: v.array(
       v.object({ name: v.string(), amount: v.string(), unit: v.string() })
     ),
@@ -26,5 +26,6 @@ export default defineSchema({
     utensils: v.array(v.string()),
     nutrition: v.array(v.object({ label: v.string(), value: v.string() })),
     published: v.boolean(),
+    featured: v.optional(v.boolean()),
   }),
 });

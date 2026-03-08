@@ -25,7 +25,6 @@ interface Meal {
   calories: string;
   difficulty: string;
   serving?: string;
-  allergens?: string;
   ingredients: IngredientItem[] | string[];
   notIncluded?: IngredientItem[];
   utensils?: string[];
@@ -63,7 +62,7 @@ function Menu() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [meals]);
 
   useEffect(() => {
     if (selectedMeal) {
@@ -128,12 +127,38 @@ function Menu() {
               <div className="menu-card-img-wrapper">
                 <img src={meal.image} alt={meal.name} className="menu-card-img" />
                 <span className="menu-card-category">{meal.category}</span>
+                {meal.difficulty && (
+                  <span className={`menu-card-difficulty ${meal.difficulty.toLowerCase()}`}>{meal.difficulty}</span>
+                )}
               </div>
               <div className="menu-card-body">
                 <h3 className="menu-card-name">{meal.name}</h3>
                 <p className="menu-card-desc">{meal.description}</p>
+                <span
+                  className="menu-card-readmore"
+                  onClick={(e) => { e.stopPropagation(); setSelectedMeal(meal); }}
+                >
+                  Read more
+                </span>
+                <div className="menu-card-meta">
+                  {meal.calories && (
+                    <span className="menu-card-meta-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 12c-2-2.67-6-2.67-6 2 0 4 6 8 6 8s6-4 6-8c0-4.67-4-4.67-6-2z"/></svg>
+                      {meal.calories}
+                    </span>
+                  )}
+                  {meal.serving && (
+                    <span className="menu-card-meta-item">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      {meal.serving} serving
+                    </span>
+                  )}
+                </div>
                 <div className="menu-card-footer">
-                  <span className="menu-card-time">{meal.time}</span>
+                  <span className="menu-card-time">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    {meal.time}
+                  </span>
                   <span className="menu-card-price">{meal.price}</span>
                 </div>
               </div>
@@ -189,19 +214,6 @@ function Menu() {
                 <h3>Description</h3>
                 <p>{selectedMeal.description}</p>
               </div>
-
-              {/* Allergens */}
-              {selectedMeal.allergens && (
-                <div className="modal-section">
-                  <h3>Allergens</h3>
-                  <p className="modal-allergens-names">
-                    {selectedMeal.allergens.split(',').map((a) => a.trim()).join(' \u2022 ')}
-                  </p>
-                  <p className="modal-allergens-disclaimer">
-                    Produced in a facility that processes eggs, milk, fish, peanuts, sesame, shellfish, soy, tree nuts, and wheat.
-                  </p>
-                </div>
-              )}
 
               {/* Ingredients */}
               {selectedMeal.ingredients && selectedMeal.ingredients.length > 0 && (
