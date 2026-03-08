@@ -89,8 +89,11 @@ function Menu() {
 
       {/* MENU HERO */}
       <section className="menu-hero">
-        <h1>Our Menu</h1>
-        <p>Fresh ingredients. Simple recipes. Delivered weekly.</p>
+        <div className="menu-hero-content">
+          <span className="menu-hero-badge">Loopit Menu</span>
+          <h1>Discover Our Meals</h1>
+          <p>Fresh ingredients. Simple recipes. Delivered weekly to your door.</p>
+        </div>
       </section>
 
       {/* CATEGORY FILTER */}
@@ -113,10 +116,19 @@ function Menu() {
       {/* MEALS GRID */}
       <section className="section menu-section">
         {convexMeals === undefined ? (
-          <p style={{ textAlign: 'center', color: 'var(--color-text-light)', padding: '3rem 0' }}>Loading menu...</p>
+          <div className="menu-loading">
+            <div className="menu-loading-spinner" />
+            <p>Loading menu...</p>
+          </div>
         ) : meals.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--color-text-light)', padding: '3rem 0' }}>No meals available yet. Check back soon!</p>
+          <div className="menu-empty">
+            <p>No meals available yet. Check back soon!</p>
+          </div>
         ) : (
+        <>
+        <div className="menu-results-bar">
+          <span className="menu-results-count">{meals.length} {meals.length === 1 ? 'meal' : 'meals'} found</span>
+        </div>
         <div className="menu-grid-container">
           {meals.map((meal, index) => (
             <div
@@ -165,6 +177,7 @@ function Menu() {
             </div>
           ))}
         </div>
+        </>
         )}
       </section>
 
