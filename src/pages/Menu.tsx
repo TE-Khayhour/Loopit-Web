@@ -125,7 +125,7 @@ function Menu() {
             <p>No meals available yet. Check back soon!</p>
           </div>
         ) : (
-        <>
+        <div>
         <div className="menu-results-bar">
           <span className="menu-results-count">{meals.length} {meals.length === 1 ? 'meal' : 'meals'} found</span>
         </div>
@@ -177,7 +177,7 @@ function Menu() {
             </div>
           ))}
         </div>
-        </>
+        </div>
         )}
       </section>
 

@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -12,6 +13,14 @@ import RequireAuth from './pages/admin/RequireAuth';
 import './App.css';
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -27,6 +36,7 @@ function App() {
   return (
     <ConvexProvider client={convex}>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Admin routes (no navbar/footer) */}
           <Route path="/admin" element={<AdminLogin />} />
