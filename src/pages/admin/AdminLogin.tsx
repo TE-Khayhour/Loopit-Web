@@ -27,7 +27,7 @@ function AdminLogin() {
         <div className="admin-login-header">
           <img
             src="/assets/images/android-chrome-192x192.png"
-            alt="Loopit"
+            alt="LoopIt"
             className="admin-login-logo"
           />
           <h1>Admin Panel</h1>

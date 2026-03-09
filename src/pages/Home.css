@@ -332,6 +332,7 @@
   height: 76px;
   border-radius: 50%;
   background-color: var(--color-accent);
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -555,7 +556,7 @@
    RESPONSIVE
    ============================== */
 @media (max-width: 992px) {
-  /* Why Choose Loopit */
+  /* Why Choose LoopIt */
   .benefits {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -584,7 +585,7 @@
     font-size: 1rem;
   }
 
-  /* What is Loopit */
+  /* What is LoopIt */
   .two-col {
     flex-direction: column;
     gap: 2rem;
@@ -596,7 +597,7 @@
     gap: 1.5rem;
   }
 
-  /* Why Choose Loopit */
+  /* Why Choose LoopIt */
   .benefits {
     grid-template-columns: 1fr;
   }

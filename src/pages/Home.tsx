@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { Clock, X, Sprout, ChefHat, Recycle, Timer } from 'lucide-react';
 import './Home.css';
 import './Menu.css';
 
@@ -94,20 +95,20 @@ function Home() {
       <section id="what-is-loopit" className="section what-is-loopit">
         <div className="section-container two-col">
           <div className="what-image animate-on-scroll">
-            {/* TODO: Replace with your "What is Loopit" image */}
-            <img src="/assets/images/what-LoopIt.png" alt="What is Loopit" />
+            {/* TODO: Replace with your "What is LoopIt" image */}
+            <img src="/assets/images/what-LoopIt.png" alt="What is LoopIt" />
           </div>
           <div className="what-text animate-on-scroll delay-2">
-            <h2>What is Loopit?</h2>
+            <h2>What is LoopIt?</h2>
             <p>
-              Loopit is Cambodia's first meal kit delivery service. We bring
+              LoopIt is Cambodia's first meal kit delivery service. We bring
               pre-portioned, fresh ingredients and easy-to-follow recipes
               straight to your door — so you can cook delicious homemade meals
               without the hassle of grocery shopping.
             </p>
             <p>
               Whether you're a busy professional, a student, or a family looking
-              to eat better, Loopit makes cooking simple, fun, and waste-free.
+              to eat better, LoopIt makes cooking simple, fun, and waste-free.
             </p>
           </div>
         </div>
@@ -155,35 +156,35 @@ function Home() {
       {/* ======================== */}
       <section id="why-loopit" className="section why-loopit">
         <div className="section-header animate-on-scroll">
-          <h2 className="section-title">Why Choose Loopit?</h2>
+          <h2 className="section-title">Why Choose LoopIt?</h2>
           <p className="section-subtitle">Good food starts with great ingredients and a simple process.</p>
           <span className="section-accent" />
         </div>
         <div className="section-container benefits">
           <div className="benefit-card animate-on-scroll delay-1">
             <div className="benefit-icon-wrapper">
-              <img src="/assets/icons/fresh_local.png" alt="Fresh & Local" className="benefit-icon" />
+              <Sprout size={36} strokeWidth={1.75} />
             </div>
             <h3>Fresh & Local</h3>
             <p>We source ingredients from local Cambodian farmers and suppliers.</p>
           </div>
           <div className="benefit-card animate-on-scroll delay-2">
             <div className="benefit-icon-wrapper">
-              <img src="/assets/icons/ez_cook.png" alt="Easy to Cook" className="benefit-icon" />
+              <ChefHat size={36} strokeWidth={1.75} />
             </div>
             <h3>Easy to Cook</h3>
             <p>Step-by-step recipe cards designed for all skill levels.</p>
           </div>
           <div className="benefit-card animate-on-scroll delay-3">
             <div className="benefit-icon-wrapper">
-              <img src="/assets/icons/less_waste.png" alt="Less Waste" className="benefit-icon" />
+              <Recycle size={36} strokeWidth={1.75} />
             </div>
             <h3>Less Waste</h3>
             <p>Pre-portioned ingredients mean you only get what you need.</p>
           </div>
           <div className="benefit-card animate-on-scroll delay-4">
             <div className="benefit-icon-wrapper">
-              <img src="/assets/icons/save_time.png" alt="Save Time" className="benefit-icon" />
+              <Timer size={36} strokeWidth={1.75} />
             </div>
             <h3>Save Time</h3>
             <p>No planning, no shopping — just cook and enjoy.</p>
@@ -217,7 +218,7 @@ function Home() {
                   <span className="meal-readmore">Read more</span>
                   <div className="meal-meta">
                     <span className="meal-tag">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                      <Clock size={14} strokeWidth={1.75} />
                       {meal.time}
                     </span>
                     <span className="meal-price">{meal.price}</span>
@@ -258,10 +259,7 @@ function Home() {
         <div className="modal-overlay" onClick={() => setSelectedMeal(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setSelectedMeal(null)} aria-label="Close">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <X size={20} strokeWidth={2.5} />
             </button>
 
             <div className="modal-img-wrapper">

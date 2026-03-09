@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronDown } from 'lucide-react';
 import './Navbar.css';
 
 const homeSections = [
-  { id: 'what-is-loopit', label: 'What is Loopit?' },
+  { id: 'what-is-loopit', label: 'What is LoopIt?' },
   { id: 'how-it-works', label: 'How It Works' },
-  { id: 'why-loopit', label: 'Why Loopit' },
+  { id: 'why-loopit', label: 'Why LoopIt' },
   { id: 'featured-meals', label: 'Featured Meals' },
 ];
 
@@ -68,10 +69,10 @@ function Navbar() {
         <NavLink to="/" className="navbar-logo" onClick={closeMenu}>
           <img
             src="/assets/images/android-chrome-192x192.png"
-            alt="Loopit logo"
+            alt="LoopIt logo"
             className="navbar-logo-icon"
           />
-          <span className="navbar-logo-text">Loopit</span>
+          <span className="navbar-logo-text">LoopIt</span>
         </NavLink>
 
         <button
@@ -96,19 +97,7 @@ function Navbar() {
               onClick={goHome}
             >
               Home
-              <svg
-                className={`dropdown-arrow ${dropdownOpen ? 'open' : ''}`}
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+              <ChevronDown size={12} strokeWidth={2.5} className={`dropdown-arrow ${dropdownOpen ? 'open' : ''}`} />
             </button>
             <ul className={`dropdown ${dropdownOpen ? 'show' : ''}`}>
               {homeSections.map((s) => (
@@ -130,19 +119,7 @@ function Navbar() {
               onClick={() => { closeMenu(); navigate('/about'); if (location.pathname === '/about') window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             >
               About Us
-              <svg
-                className={`dropdown-arrow ${aboutDropdownOpen ? 'open' : ''}`}
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
+              <ChevronDown size={12} strokeWidth={2.5} className={`dropdown-arrow ${aboutDropdownOpen ? 'open' : ''}`} />
             </button>
             <ul className={`dropdown ${aboutDropdownOpen ? 'show' : ''}`}>
               {aboutSections.map((s) => (

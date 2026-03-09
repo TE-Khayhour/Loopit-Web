@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Facebook, Instagram, Linkedin, Send } from 'lucide-react';
 import './Footer.css';
 
 function Footer() {
@@ -8,10 +9,10 @@ function Footer() {
         <div className="footer-brand">
           <img
             src="/assets/images/android-chrome-192x192.png"
-            alt="Loopit logo"
+            alt="LoopIt logo"
             className="footer-logo-icon"
           />
-          <span className="footer-logo-text">Loopit</span>
+          <span className="footer-logo-text">LoopIt</span>
           <p className="footer-tagline">
             Make Cooking Easier,
             <br />Healthier & More Fun!
@@ -34,23 +35,23 @@ function Footer() {
           <p>loopit2026@gmail.com</p>
           <div className="footer-socials">
             <a href="https://www.facebook.com/share/1HarRRapAU/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-              <img src="/assets/icons/facebook.png" alt="Facebook" />
+              <Facebook size={20} strokeWidth={1.75} />
             </a>
             <a href="https://www.instagram.com/loopit.kh?igsh=MTM4dXkwNGhmMXJp" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-              <img src="/assets/icons/instagram.png" alt="Instagram" />
+              <Instagram size={20} strokeWidth={1.75} />
             </a>
             <a href="https://www.linkedin.com/company/loopit-food/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-              <img src="/assets/icons/linkedin.png" alt="LinkedIn" />
+              <Linkedin size={20} strokeWidth={1.75} />
             </a>
             <a href="https://t.me/loopitkh" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
-              <img src="/assets/icons/telegram.png" alt="Telegram" />
+              <Send size={20} strokeWidth={1.75} />
             </a>
           </div>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Loopit. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} LoopIt. All rights reserved.</p>
       </div>
     </footer>
   );

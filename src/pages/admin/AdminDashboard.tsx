@@ -290,8 +290,8 @@ function AdminDashboard() {
     <div className="admin-dashboard">
       <header className="admin-header">
         <div className="admin-header-left">
-          <img src="/assets/images/android-chrome-192x192.png" alt="Loopit" className="admin-header-logo" />
-          <h1>Loopit Admin</h1>
+          <img src="/assets/images/android-chrome-192x192.png" alt="LoopIt" className="admin-header-logo" />
+          <h1>LoopIt Admin</h1>
         </div>
         <button className="admin-logout-btn" onClick={handleLogout}>Logout</button>
       </header>

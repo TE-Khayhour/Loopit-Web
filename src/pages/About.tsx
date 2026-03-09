@@ -1,30 +1,31 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { LayoutGrid, Clock, FileText, MapPin, BookOpen, Leaf, Sparkles, Globe, Heart } from 'lucide-react';
 import './About.css';
 
 const values = [
   {
-    icon: '/assets/icons/recipe.png',
+    icon: <BookOpen size={48} strokeWidth={1.5} />,
     title: 'Reliable Recipes',
     desc: 'Committed to affordable, time-saving meals that fit any lifestyle and budget.',
   },
   {
-    icon: '/assets/icons/farm_fresh_ingredients.png',
+    icon: <Leaf size={48} strokeWidth={1.5} />,
     title: 'Farm-Fresh Ingredients',
     desc: 'Peak produce, from farm to fridge.',
   },
   {
-    icon: '/assets/icons/possiblities.png',
+    icon: <Sparkles size={48} strokeWidth={1.5} />,
     title: 'Delicious Possibilities',
     desc: 'Unlocking delicious, new meal possibilities with a vast chef-crafted menu.',
   },
   {
-    icon: '/assets/icons/sustainable.png',
+    icon: <Globe size={48} strokeWidth={1.5} />,
     title: 'Sustainable Solutions',
     desc: 'Reducing food waste and ensuring CO2-offset deliveries for your box.',
   },
   {
-    icon: '/assets/icons/meaningful.png',
+    icon: <Heart size={48} strokeWidth={1.5} />,
     title: 'Meaningful Moments',
     desc: 'Helping each other bond over joyful cooking moments and homemade meals.',
   },
@@ -32,30 +33,22 @@ const values = [
 
 const mealKitFeatures = [
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    ),
+    icon: <LayoutGrid size={28} strokeWidth={1.75} />,
     title: 'Pre-Portioned',
     desc: 'Exact ingredients for each recipe — no measuring, no leftovers.',
   },
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    ),
+    icon: <Clock size={28} strokeWidth={1.75} />,
     title: 'Ready in 30 Min',
     desc: 'Most meals can be prepared in under 30 minutes with simple steps.',
   },
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-    ),
+    icon: <FileText size={28} strokeWidth={1.75} />,
     title: 'Step-by-Step',
     desc: 'Easy-to-follow recipe cards included with every delivery.',
   },
   {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    ),
+    icon: <MapPin size={28} strokeWidth={1.75} />,
     title: 'Delivered Fresh',
     desc: 'Weekly delivery straight to your door across Phnom Penh.',
   },
@@ -102,7 +95,7 @@ function About() {
           {values.map((v, i) => (
             <div key={v.title} className="about-value-card fade-up" style={{ transitionDelay: `${i * 0.1}s` }}>
               <div className="about-value-icon">
-                <img src={v.icon} alt={v.title} />
+                {v.icon}
               </div>
               <h3>{v.title}</h3>
               <p>{v.desc}</p>
@@ -115,12 +108,12 @@ function About() {
       <section id="our-meal-kits" className="about-section about-mealkits">
         <div className="about-mealkits-inner">
           <div className="about-mealkits-img fade-up">
-            <img src="/assets/images/meal_kit.png" alt="Loopit Meal Kit" />
+            <img src="/assets/images/meal_kit.png" alt="LoopIt Meal Kit" />
           </div>
           <div className="about-mealkits-content fade-up" style={{ transitionDelay: '0.15s' }}>
             <h2>Our Meal Kits</h2>
             <p>
-              Every Loopit box is packed with pre-portioned, farm-fresh ingredients and an easy-to-follow recipe card. 
+              Every LoopIt box is packed with pre-portioned, farm-fresh ingredients and an easy-to-follow recipe card. 
               No planning, no grocery runs — just great food on your table in minutes.
             </p>
             <div className="about-mealkits-features">
@@ -142,14 +135,14 @@ function About() {
       <section id="meet-our-team" className="about-section about-team">
         <div className="about-section-header fade-up">
           <h2>Meet Our Team</h2>
-          <p>The passionate people behind Loopit.</p>
+          <p>The passionate people behind LoopIt.</p>
         </div>
         <div className="about-team-photos fade-up">
           <div className="about-team-photo">
-            <img src="/assets/images/team_photo.jpg" alt="Loopit Team" />
+            <img src="/assets/images/team_photo.jpg" alt="LoopIt Team" />
           </div>
           <div className="about-team-photo">
-            <img src="/assets/images/team_pic.JPG" alt="Loopit Team" />
+            <img src="/assets/images/team_pic.JPG" alt="LoopIt Team" />
           </div>
         </div>
         <div className="about-team-grid">

@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { Flame, Users, Clock, X, LayoutGrid, CakeSlice } from 'lucide-react';
+import CN from 'country-flag-icons/react/3x2/CN';
+import KH from 'country-flag-icons/react/3x2/KH';
+import KR from 'country-flag-icons/react/3x2/KR';
 import './Menu.css';
 
 interface IngredientItem {
@@ -90,7 +94,7 @@ function Menu() {
       {/* MENU HERO */}
       <section className="menu-hero">
         <div className="menu-hero-content">
-          <span className="menu-hero-badge">Loopit Menu</span>
+          <span className="menu-hero-badge">LoopIt Menu</span>
           <h1>Discover Our Meals</h1>
           <p>Fresh ingredients. Simple recipes. Delivered weekly to your door.</p>
         </div>
@@ -100,15 +104,25 @@ function Menu() {
       {categoryNames.length > 0 && (
         <div className="menu-filter-bar">
           <div className="menu-filter-container">
-            {['All', ...categoryNames].map((cat) => (
-              <button
-                key={cat}
-                className={`menu-filter-btn ${activeCategory === cat ? 'active' : ''}`}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat}
-              </button>
-            ))}
+            {['All', ...categoryNames].map((cat) => {
+              const iconMap: Record<string, React.ReactNode> = {
+                All: <LayoutGrid size={16} strokeWidth={1.75} />,
+                Chinese: <CN title="China" className="menu-filter-flag" />,
+                Khmer: <KH title="Cambodia" className="menu-filter-flag" />,
+                Korean: <KR title="South Korea" className="menu-filter-flag" />,
+                Baking: <CakeSlice size={16} strokeWidth={1.75} />,
+              };
+              return (
+                <button
+                  key={cat}
+                  className={`menu-filter-btn ${activeCategory === cat ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(cat)}
+                >
+                  {iconMap[cat] || null}
+                  {cat}
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -155,20 +169,20 @@ function Menu() {
                 <div className="menu-card-meta">
                   {meal.calories && (
                     <span className="menu-card-meta-item">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 12c-2-2.67-6-2.67-6 2 0 4 6 8 6 8s6-4 6-8c0-4.67-4-4.67-6-2z"/></svg>
+                      <Flame size={14} strokeWidth={1.75} />
                       {meal.calories}
                     </span>
                   )}
                   {meal.serving && (
                     <span className="menu-card-meta-item">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                      <Users size={14} strokeWidth={1.75} />
                       {meal.serving} serving
                     </span>
                   )}
                 </div>
                 <div className="menu-card-footer">
                   <span className="menu-card-time">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <Clock size={14} strokeWidth={1.75} />
                     {meal.time}
                   </span>
                   <span className="menu-card-price">{meal.price}</span>
@@ -186,10 +200,7 @@ function Menu() {
         <div className="modal-overlay" onClick={() => setSelectedMeal(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setSelectedMeal(null)} aria-label="Close">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <X size={20} strokeWidth={2.5} />
             </button>
 
             {/* Hero image */}
