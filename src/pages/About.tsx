@@ -108,7 +108,7 @@ function About() {
       <section id="our-meal-kits" className="about-section about-mealkits">
         <div className="about-mealkits-inner">
           <div className="about-mealkits-img fade-up">
-            <img src="/assets/images/meal_kit.png" alt="LoopIt Meal Kit" />
+            <img src="/assets/images/meal_kit.png" alt="LoopIt Meal Kit" loading="lazy" decoding="async" />
           </div>
           <div className="about-mealkits-content fade-up" style={{ transitionDelay: '0.15s' }}>
             <h2>Our Meal Kits</h2>
@@ -139,17 +139,17 @@ function About() {
         </div>
         <div className="about-team-photos fade-up">
           <div className="about-team-photo">
-            <img src="/assets/images/team_photo.jpg" alt="LoopIt Team" />
+            <img src="/assets/images/team_photo.jpg" alt="LoopIt Team" loading="lazy" decoding="async" />
           </div>
           <div className="about-team-photo">
-            <img src="/assets/images/team_pic.JPG" alt="LoopIt Team" />
+            <img src="/assets/images/team_pic.JPG" alt="LoopIt Team" loading="lazy" decoding="async" />
           </div>
         </div>
         <div className="about-team-grid">
           {teamMembers.map((m, i) => (
             <div key={m.name} className="about-team-card fade-up" style={{ transitionDelay: `${i * 0.1}s` }}>
               <div className="about-team-img">
-                <img src={m.image} alt={m.name} />
+                <img src={m.image} alt={m.name} loading="lazy" decoding="async" />
               </div>
               <h3>{m.name}</h3>
               <p>{m.role}</p>

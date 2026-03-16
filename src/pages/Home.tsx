@@ -96,7 +96,7 @@ function Home() {
         <div className="section-container two-col">
           <div className="what-image animate-on-scroll">
             {/* TODO: Replace with your "What is LoopIt" image */}
-            <img src="/assets/images/what-LoopIt.png" alt="What is LoopIt" />
+            <img src="/assets/images/what-LoopIt.png" alt="What is LoopIt" loading="lazy" decoding="async" />
           </div>
           <div className="what-text animate-on-scroll delay-2">
             <h2>What is LoopIt?</h2>
@@ -126,7 +126,7 @@ function Home() {
         <div className="section-container steps">
           <div className="step animate-on-scroll delay-1">
             <div className="step-img-wrapper">
-              <img src="/assets/images/browse_menu.jpg" alt="Browse and choose meals" className="step-img" />
+              <img src="/assets/images/browse_menu.jpg" alt="Browse and choose meals" className="step-img" loading="lazy" decoding="async" />
               <span className="step-number">1</span>
             </div>
             <h3>Choose Your Meals</h3>
@@ -134,7 +134,7 @@ function Home() {
           </div>
           <div className="step animate-on-scroll delay-2">
             <div className="step-img-wrapper">
-              <img src="/assets/images/deliver.jpg" alt="We deliver to your door" className="step-img" />
+              <img src="/assets/images/deliver.jpg" alt="We deliver to your door" className="step-img" loading="lazy" decoding="async" />
               <span className="step-number">2</span>
             </div>
             <h3>We Deliver</h3>
@@ -142,7 +142,7 @@ function Home() {
           </div>
           <div className="step animate-on-scroll delay-3">
             <div className="step-img-wrapper">
-              <img src="/assets/images/cook_enjoy.jpg" alt="Cook and enjoy" className="step-img" />
+              <img src="/assets/images/cook_enjoy.jpg" alt="Cook and enjoy" className="step-img" loading="lazy" decoding="async" />
               <span className="step-number">3</span>
             </div>
             <h3>Cook & Enjoy</h3>
@@ -206,7 +206,7 @@ function Home() {
             featuredMeals.map((meal, index) => (
               <div key={meal._id} className={`meal-card animate-on-scroll delay-${(index % 4) + 1}`} style={{ cursor: 'pointer' }} onClick={() => setSelectedMeal(meal as unknown as Meal)}>
                 <div className="meal-img-wrapper">
-                  <img src={meal.image} alt={meal.name} className="meal-img" />
+                  <img src={meal.image} alt={meal.name} className="meal-img" loading="lazy" decoding="async" />
                   <span className="meal-card-category">{meal.category}</span>
                   {meal.difficulty && (
                     <span className={`meal-card-difficulty ${meal.difficulty.toLowerCase()}`}>{meal.difficulty}</span>

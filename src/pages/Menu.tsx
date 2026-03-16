@@ -151,7 +151,7 @@ function Menu() {
               onClick={() => setSelectedMeal(meal)}
             >
               <div className="menu-card-img-wrapper">
-                <img src={meal.image} alt={meal.name} className="menu-card-img" />
+                <img src={meal.image} alt={meal.name} className="menu-card-img" loading="lazy" decoding="async" />
                 <span className="menu-card-category">{meal.category}</span>
                 {meal.difficulty && (
                   <span className={`menu-card-difficulty ${meal.difficulty.toLowerCase()}`}>{meal.difficulty}</span>
