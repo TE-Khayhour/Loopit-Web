@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { Clock, X, Sprout, ChefHat, Recycle, Timer } from 'lucide-react';
+import { Clock, X, Sprout, ChefHat, Recycle, Timer, LogIn, User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Home.css';
 import './Menu.css';
 
@@ -22,6 +23,7 @@ function isStructuredIngredient(item: unknown): item is IngredientItem {
 function Home() {
   const featuredMeals = useQuery(api.meals.listFeatured);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (selectedMeal) {
@@ -85,6 +87,17 @@ function Home() {
             <Link to="/menu" className="btn btn-white">
               View Our Menu
             </Link>
+            {user ? (
+              <Link to="/orders" className="btn btn-hero-outline">
+                <User size={18} strokeWidth={1.75} />
+                My Orders
+              </Link>
+            ) : (
+              <Link to="/login" className="btn btn-hero-outline">
+                <LogIn size={18} strokeWidth={1.75} />
+                Sign In
+              </Link>
+            )}
           </div>
         </div>
       </section>

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { Flame, Users, Clock, X, LayoutGrid, CakeSlice } from 'lucide-react';
+import { Flame, Users, Clock, X, LayoutGrid, CakeSlice, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 import CN from 'country-flag-icons/react/3x2/CN';
 import KH from 'country-flag-icons/react/3x2/KH';
 import KR from 'country-flag-icons/react/3x2/KR';
@@ -19,6 +21,7 @@ interface NutritionItem {
 }
 
 interface Meal {
+  _id: any;
   name: string;
   description: string;
   image: string;
@@ -42,9 +45,13 @@ function isStructuredIngredient(item: unknown): item is IngredientItem {
 function Menu() {
   const convexMeals = useQuery(api.meals.listPublished);
   const convexCategories = useQuery(api.categories.list);
-  const allMeals: Meal[] = convexMeals ?? [];
+  const allMeals: Meal[] = (convexMeals as any) ?? [];
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [showCartDrawer, setShowCartDrawer] = useState(false);
+  
+  const { items, addToCart, removeFromCart, updateQuantity, totalItems, totalPrice } = useCart();
+  const navigate = useNavigate();
 
   const categoryNames = (convexCategories ?? []).map((c) => c.name);
   const meals = activeCategory === 'All' ? allMeals : allMeals.filter((m) => m.category === activeCategory);
@@ -69,13 +76,13 @@ function Menu() {
   }, [meals]);
 
   useEffect(() => {
-    if (selectedMeal) {
+    if (selectedMeal || showCartDrawer) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [selectedMeal]);
+  }, [selectedMeal, showCartDrawer]);
 
   const renderIngredientGrid = (items: IngredientItem[]) => (
     <div className="modal-ingredient-grid">
@@ -160,12 +167,29 @@ function Menu() {
               <div className="menu-card-body">
                 <h3 className="menu-card-name">{meal.name}</h3>
                 <p className="menu-card-desc">{meal.description}</p>
-                <span
-                  className="menu-card-readmore"
-                  onClick={(e) => { e.stopPropagation(); setSelectedMeal(meal); }}
-                >
-                  Read more
-                </span>
+                <div className="menu-card-actions">
+                  <span
+                    className="menu-card-readmore"
+                    onClick={(e) => { e.stopPropagation(); setSelectedMeal(meal); }}
+                  >
+                    Read more
+                  </span>
+                  <button 
+                    className="add-to-cart-btn-sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart({
+                        mealId: meal._id,
+                        name: meal.name,
+                        price: meal.price,
+                        image: meal.image
+                      });
+                    }}
+                  >
+                    <Plus size={16} />
+                    Add
+                  </button>
+                </div>
                 <div className="menu-card-meta">
                   {meal.calories && (
                     <span className="menu-card-meta-item">
@@ -194,6 +218,72 @@ function Menu() {
         </div>
         )}
       </section>
+
+      {/* Floating Cart Button */}
+      {totalItems > 0 && (
+        <button className="floating-cart-btn" onClick={() => setShowCartDrawer(true)}>
+          <ShoppingCart size={24} />
+          <span className="cart-badge">{totalItems}</span>
+        </button>
+      )}
+
+      {/* Cart Drawer Overlay */}
+      {showCartDrawer && (
+        <div className="cart-drawer-overlay" onClick={() => setShowCartDrawer(false)}>
+          <div className="cart-drawer" onClick={(e) => e.stopPropagation()}>
+            <div className="cart-drawer-header">
+              <h3>Your Cart</h3>
+              <button onClick={() => setShowCartDrawer(false)}><X size={24} /></button>
+            </div>
+            
+            <div className="cart-drawer-content">
+              {items.length === 0 ? (
+                <div className="empty-cart-msg">
+                  <ShoppingCart size={48} />
+                  <p>Your cart is empty</p>
+                  <button className="start-shopping-btn" onClick={() => setShowCartDrawer(false)}>Start Shopping</button>
+                </div>
+              ) : (
+                <div className="cart-items-list">
+                  {items.map((item) => (
+                    <div key={item.mealId} className="cart-item">
+                      <img src={item.image} alt={item.name} />
+                      <div className="cart-item-info">
+                        <h4>{item.name}</h4>
+                        <p>{item.price}</p>
+                        <div className="cart-item-qty">
+                          <button onClick={() => updateQuantity(item.mealId, item.quantity - 1)}><Minus size={14} /></button>
+                          <span>{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item.mealId, item.quantity + 1)}><Plus size={14} /></button>
+                          <button className="remove-item-btn" onClick={() => removeFromCart(item.mealId)}><Trash2 size={14} /></button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {items.length > 0 && (
+              <div className="cart-drawer-footer">
+                <div className="cart-total-row">
+                  <span>Total</span>
+                  <span>{totalPrice}</span>
+                </div>
+                <button 
+                  className="checkout-btn"
+                  onClick={() => {
+                    setShowCartDrawer(false);
+                    navigate('/checkout');
+                  }}
+                >
+                  Checkout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* MEAL DETAIL MODAL */}
       {selectedMeal && (
@@ -310,9 +400,25 @@ function Menu() {
                 </div>
               )}
 
-              {/* Price */}
+              {/* Price and Add to Cart */}
               <div className="modal-price-row">
                 <span className="modal-price">{selectedMeal.price}</span>
+                <button 
+                  className="modal-add-to-cart-btn"
+                  onClick={() => {
+                    addToCart({
+                      mealId: selectedMeal._id,
+                      name: selectedMeal.name,
+                      price: selectedMeal.price,
+                      image: selectedMeal.image
+                    });
+                    setSelectedMeal(null);
+                    setShowCartDrawer(true);
+                  }}
+                >
+                  <Plus size={20} />
+                  Add to Cart
+                </button>
               </div>
             </div>
           </div>

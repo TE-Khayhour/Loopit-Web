@@ -10,6 +10,8 @@
 
 import type * as categories from "../categories.js";
 import type * as meals from "../meals.js";
+import type * as orders from "../orders.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -20,6 +22,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   categories: typeof categories;
   meals: typeof meals;
+  orders: typeof orders;
+  users: typeof users;
 }>;
 
 /**

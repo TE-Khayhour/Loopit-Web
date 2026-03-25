@@ -7,9 +7,15 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Menu from './pages/Menu';
 import Contact from './pages/Contact';
+import Login from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
+import Checkout from './pages/order/Checkout';
+import Orders from './pages/order/Orders';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import RequireAuth from './pages/admin/RequireAuth';
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import './App.css';
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
@@ -35,27 +41,37 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <ConvexProvider client={convex}>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          {/* Admin routes (no navbar/footer) */}
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route
-            path="/admin/dashboard"
-            element={
-              <RequireAuth>
-                <AdminDashboard />
-              </RequireAuth>
-            }
-          />
+      <AuthProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
+              {/* Admin routes (no navbar/footer) */}
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <RequireAuth>
+                    <AdminDashboard />
+                  </RequireAuth>
+                }
+              />
 
-          {/* Public routes */}
-          <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
-          <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
-          <Route path="/menu" element={<PublicLayout><Menu /></PublicLayout>} />
-          <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
-        </Routes>
-      </BrowserRouter>
+              {/* Auth routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+
+              {/* Public routes */}
+              <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+              <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+              <Route path="/menu" element={<PublicLayout><Menu /></PublicLayout>} />
+              <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+              <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
+              <Route path="/orders" element={<PublicLayout><Orders /></PublicLayout>} />
+            </Routes>
+          </BrowserRouter>
+        </CartProvider>
+      </AuthProvider>
     </ConvexProvider>
   );
 }

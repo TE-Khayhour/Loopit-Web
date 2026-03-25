@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
+import { Clock, ClipboardCheck, CookingPot, Truck, CheckCircle, Ban, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
 import './AdminDashboard.css';
 
 interface IngredientRow {
@@ -57,6 +58,8 @@ const emptyForm: MealForm = {
 function AdminDashboard() {
   const navigate = useNavigate();
   const meals = useQuery(api.meals.listAll);
+  const orders = useQuery(api.orders.listAllOrders);
+  
   const createMeal = useMutation(api.meals.create);
   const updateMeal = useMutation(api.meals.update);
   const togglePublished = useMutation(api.meals.togglePublished);
@@ -67,8 +70,11 @@ function AdminDashboard() {
   const createCategory = useMutation(api.categories.create);
   const removeCategory = useMutation(api.categories.remove);
 
+  const updateOrderStatus = useMutation(api.orders.updateOrderStatus);
+
   const generateUploadUrl = useMutation(api.meals.generateUploadUrl);
 
+  const [activeTab, setActiveTab] = useState<'meals' | 'orders'>('meals');
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<Id<"meals"> | null>(null);
   const [form, setForm] = useState<MealForm>(emptyForm);
@@ -206,6 +212,10 @@ function AdminDashboard() {
     }
   };
 
+  const handleStatusUpdate = async (orderId: Id<"orders">, newStatus: string) => {
+    await updateOrderStatus({ orderId, status: newStatus });
+  };
+
   // --- Dynamic list helpers ---
   const updateIngredient = (list: 'ingredients' | 'notIncluded', idx: number, field: keyof IngredientRow, val: string) => {
     const arr = [...form[list]];
@@ -293,74 +303,212 @@ function AdminDashboard() {
           <img src="/assets/images/android-chrome-192x192.png" alt="LoopIt" className="admin-header-logo" />
           <h1>LoopIt Admin</h1>
         </div>
-        <button className="admin-logout-btn" onClick={handleLogout}>Logout</button>
+        <div className="admin-header-right">
+          <div className="admin-tabs">
+            <button className={`admin-tab ${activeTab === 'meals' ? 'active' : ''}`} onClick={() => setActiveTab('meals')}>Meals</button>
+            <button className={`admin-tab ${activeTab === 'orders' ? 'active' : ''}`} onClick={() => setActiveTab('orders')}>
+              Orders {orders && orders.filter(o => o.status === 'Pending').length > 0 && <span className="admin-tab-badge">{orders.filter(o => o.status === 'Pending').length}</span>}
+            </button>
+          </div>
+          <button className="admin-logout-btn" onClick={handleLogout}>Logout</button>
+        </div>
       </header>
 
       <main className="admin-main">
-        <div className="admin-toolbar">
-          <h2>Menu Management</h2>
-          <div className="admin-toolbar-actions">
-            <button className="admin-cat-btn" onClick={() => setShowCategoryManager(true)}>Categories</button>
-            <button className="admin-add-btn" onClick={openCreate}>+ Add Meal</button>
-          </div>
-        </div>
+        {activeTab === 'meals' ? (
+          <>
+            <div className="admin-toolbar">
+              <h2>Menu Management</h2>
+              <div className="admin-toolbar-actions">
+                <button className="admin-cat-btn" onClick={() => setShowCategoryManager(true)}>Categories</button>
+                <button className="admin-add-btn" onClick={openCreate}>+ Add Meal</button>
+              </div>
+            </div>
 
-        {meals === undefined ? (
-          <p className="admin-loading">Loading meals...</p>
-        ) : meals.length === 0 ? (
-          <p className="admin-empty">No meals yet. Click "Add Meal" to create one.</p>
+            {meals === undefined ? (
+              <p className="admin-loading">Loading meals...</p>
+            ) : meals.length === 0 ? (
+              <p className="admin-empty">No meals yet. Click "Add Meal" to create one.</p>
+            ) : (
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Image</th>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Price</th>
+                      <th>Time</th>
+                      <th>Serving</th>
+                      <th>Status</th>
+                      <th>Featured</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {meals.map((meal) => (
+                      <tr key={meal._id}>
+                        <td><img src={meal.image} alt={meal.name} className="admin-table-img" /></td>
+                        <td className="admin-table-name">{meal.name}</td>
+                        <td>{meal.category}</td>
+                        <td>{meal.price}</td>
+                        <td>{meal.time}</td>
+                        <td>{(meal as any).serving || '—'}</td>
+                        <td>
+                          <button
+                            className={`admin-status-badge ${meal.published ? 'published' : 'draft'}`}
+                            onClick={() => togglePublished({ id: meal._id })}
+                          >
+                            {meal.published ? 'Published' : 'Draft'}
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            className={`admin-status-badge ${(meal as any).featured ? 'featured' : 'not-featured'}`}
+                            onClick={() => toggleFeatured({ id: meal._id })}
+                          >
+                            {(meal as any).featured ? 'Yes' : 'No'}
+                          </button>
+                        </td>
+                        <td>
+                          <div className="admin-actions">
+                            <button className="admin-action-btn edit" onClick={() => openEdit(meal)}>Edit</button>
+                            <button className="admin-action-btn delete" onClick={() => handleDelete(meal._id)}>Delete</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         ) : (
-          <div className="admin-table-wrapper">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Time</th>
-                  <th>Serving</th>
-                  <th>Status</th>
-                  <th>Featured</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {meals.map((meal) => (
-                  <tr key={meal._id}>
-                    <td><img src={meal.image} alt={meal.name} className="admin-table-img" /></td>
-                    <td className="admin-table-name">{meal.name}</td>
-                    <td>{meal.category}</td>
-                    <td>{meal.price}</td>
-                    <td>{meal.time}</td>
-                    <td>{(meal as any).serving || '—'}</td>
-                    <td>
-                      <button
-                        className={`admin-status-badge ${meal.published ? 'published' : 'draft'}`}
-                        onClick={() => togglePublished({ id: meal._id })}
-                      >
-                        {meal.published ? 'Published' : 'Draft'}
-                      </button>
-                    </td>
-                    <td>
-                      <button
-                        className={`admin-status-badge ${(meal as any).featured ? 'featured' : 'not-featured'}`}
-                        onClick={() => toggleFeatured({ id: meal._id })}
-                      >
-                        {(meal as any).featured ? 'Yes' : 'No'}
-                      </button>
-                    </td>
-                    <td>
-                      <div className="admin-actions">
-                        <button className="admin-action-btn edit" onClick={() => openEdit(meal)}>Edit</button>
-                        <button className="admin-action-btn delete" onClick={() => handleDelete(meal._id)}>Delete</button>
+          <>
+            <div className="admin-toolbar">
+              <h2>Order Management</h2>
+            </div>
+
+            {orders === undefined ? (
+              <p className="admin-loading">Loading orders...</p>
+            ) : orders.length === 0 ? (
+              <p className="admin-empty">No orders found.</p>
+            ) : (
+              <div className="admin-orders-grid">
+                {orders.map((order) => (
+                  <div key={order._id} className="admin-order-card">
+                    <div className="admin-order-header">
+                      <div className="admin-order-user">
+                        <h4>{order.user?.username || 'Unknown User'}</h4>
+                        <p>{order.phone}</p>
                       </div>
-                    </td>
-                  </tr>
+                      <span className={`admin-order-status ${order.status.toLowerCase()}`}>{order.status}</span>
+                    </div>
+                    
+                    <div className="admin-order-details">
+                      <p><strong>Address:</strong> {order.address}</p>
+                      <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+                      <div className="admin-order-items">
+                        {order.items.map((item) => (
+                          <div key={item._id} className="admin-order-item">
+                            <span>{item.quantity} x {item.name}</span>
+                            <span>{item.price}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="admin-order-total">
+                        <strong>Total:</strong>
+                        <span>{order.total}</span>
+                      </div>
+                    </div>
+
+                    {(() => {
+                      const flow = ['Pending', 'Approved', 'Preparing', 'Delivering', 'Delivered'];
+                      const statusIcons: Record<string, React.ReactNode> = {
+                        Pending: <Clock size={14} strokeWidth={2} />,
+                        Approved: <ClipboardCheck size={14} strokeWidth={2} />,
+                        Preparing: <CookingPot size={14} strokeWidth={2} />,
+                        Delivering: <Truck size={14} strokeWidth={2} />,
+                        Delivered: <CheckCircle size={14} strokeWidth={2} />,
+                        Cancelled: <Ban size={14} strokeWidth={2} />,
+                      };
+                      const currentIdx = flow.indexOf(order.status);
+                      const isCancelled = order.status === 'Cancelled';
+                      const progress = isCancelled ? 0 : ((currentIdx) / (flow.length - 1)) * 100;
+                      return (
+                        <div className="admin-order-progress">
+                          <div className="admin-status-row">
+                            <span className={`admin-status-chip ${isCancelled ? 'cancelled' : ''}`}>
+                              {statusIcons[order.status]}
+                              {order.status}
+                            </span>
+                            {!isCancelled && order.status !== 'Delivered' && (
+                              <span className="admin-status-next">
+                                Next: {flow[currentIdx + 1]}
+                              </span>
+                            )}
+                          </div>
+                          <div className="admin-track-bar">
+                            <div className="admin-track-fill" style={{ width: `${progress}%` }} />
+                            {flow.map((step, i) => (
+                              <div
+                                key={step}
+                                className={`admin-track-dot ${i <= currentIdx && !isCancelled ? 'reached' : ''} ${i === currentIdx && !isCancelled ? 'active' : ''}`}
+                                title={step}
+                                style={{ left: `${(i / (flow.length - 1)) * 100}%` }}
+                              />
+                            ))}
+                          </div>
+                          <div className="admin-progress-actions">
+                            {!isCancelled && currentIdx > 0 && (
+                              <button
+                                type="button"
+                                className="admin-progress-back"
+                                onClick={() => handleStatusUpdate(order._id, flow[currentIdx - 1])}
+                              >
+                                <ChevronLeft size={14} strokeWidth={2.5} />
+                                {flow[currentIdx - 1]}
+                              </button>
+                            )}
+                            {!isCancelled && currentIdx < flow.length - 1 && (
+                              <button
+                                type="button"
+                                className="admin-progress-advance"
+                                onClick={() => handleStatusUpdate(order._id, flow[currentIdx + 1])}
+                              >
+                                {flow[currentIdx + 1]}
+                                <ChevronRight size={14} strokeWidth={2.5} />
+                              </button>
+                            )}
+                            {!isCancelled && order.status !== 'Delivered' && (
+                              <button
+                                type="button"
+                                className="admin-progress-cancel"
+                                onClick={() => handleStatusUpdate(order._id, 'Cancelled')}
+                              >
+                                <Ban size={13} strokeWidth={2} />
+                                Cancel
+                              </button>
+                            )}
+                            {isCancelled && (
+                              <button
+                                type="button"
+                                className="admin-progress-restore"
+                                onClick={() => handleStatusUpdate(order._id, 'Pending')}
+                              >
+                                <RotateCcw size={13} strokeWidth={2} />
+                                Restore
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            )}
+          </>
         )}
       </main>
 
