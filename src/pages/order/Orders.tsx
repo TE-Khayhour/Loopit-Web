@@ -1,7 +1,7 @@
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { useAuth } from '../../context/AuthContext';
-import { Clock, Package, Truck, CheckCircle, MapPin, ClipboardCheck, CookingPot } from 'lucide-react';
+import { Clock, Package, Truck, CheckCircle, MapPin, ClipboardCheck, CookingPot, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './Order.css';
 
@@ -75,6 +75,17 @@ function Orders() {
                   
                   <div className="order-delivery-info">
                     <p><MapPin size={16} /> {order.address}</p>
+                    {(order as any).addressMapUrl && (
+                      <a
+                        href={(order as any).addressMapUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="order-map-link"
+                      >
+                        <ExternalLink size={13} />
+                        View on Map
+                      </a>
+                    )}
                     <p className="order-total-price">Total: {order.total}</p>
                   </div>
                 </div>

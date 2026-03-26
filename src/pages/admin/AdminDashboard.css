@@ -776,6 +776,25 @@
   margin: 0;
 }
 
+.admin-map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: 0.25rem 0.6rem;
+  background: var(--color-accent);
+  border-radius: 6px;
+  width: fit-content;
+  transition: background 0.15s ease;
+}
+
+.admin-map-link:hover {
+  background: #d4edda;
+}
+
 .admin-order-items {
   margin-top: 0.5rem;
   background-color: var(--color-bg-soft);

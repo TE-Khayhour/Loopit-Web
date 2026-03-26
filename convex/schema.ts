@@ -38,6 +38,7 @@ export default defineSchema({
     total: v.string(),
     status: v.string(), // "Pending", "Approved", "Preparing", "Delivering", "Delivered", "Cancelled"
     address: v.string(),
+    addressMapUrl: v.optional(v.string()),
     phone: v.string(),
     paymentMethod: v.string(), // "Cash"
     createdAt: v.number(),

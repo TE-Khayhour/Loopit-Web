@@ -4,7 +4,7 @@ import { useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
-import { MapPin, Phone, CreditCard } from 'lucide-react';
+import { MapPin, Phone, CreditCard, ExternalLink } from 'lucide-react';
 import './Order.css';
 
 function Checkout() {
@@ -14,6 +14,7 @@ function Checkout() {
   const navigate = useNavigate();
 
   const [address, setAddress] = useState('');
+  const [addressMapUrl, setAddressMapUrl] = useState('');
   const [phone, setPhone] = useState(user?.phone || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -53,6 +54,7 @@ function Checkout() {
         userId: user._id as any,
         total: totalPrice,
         address,
+        ...(addressMapUrl.trim() ? { addressMapUrl: addressMapUrl.trim() } : {}),
         phone,
         items: items.map(i => ({
           mealId: i.mealId as any,
@@ -87,6 +89,21 @@ function Checkout() {
                   onChange={(e) => setAddress(e.target.value)}
                   required
                 />
+                <div className="map-link-input">
+                  <label className="map-link-label">
+                    <ExternalLink size={14} />
+                    Google Maps Link <span className="optional-tag">Optional</span>
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="Paste your Google Maps link for accurate location"
+                    value={addressMapUrl}
+                    onChange={(e) => setAddressMapUrl(e.target.value)}
+                  />
+                  <p className="map-link-hint">
+                    Open Google Maps, pin your location, tap "Share" and paste the link here.
+                  </p>
+                </div>
               </div>
 
               <div className="form-section">

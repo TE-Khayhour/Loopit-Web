@@ -6,6 +6,7 @@ export const createOrder = mutation({
     userId: v.id("users"),
     total: v.string(),
     address: v.string(),
+    addressMapUrl: v.optional(v.string()),
     phone: v.string(),
     items: v.array(
       v.object({
@@ -22,6 +23,7 @@ export const createOrder = mutation({
       userId: args.userId,
       total: args.total,
       address: args.address,
+      ...(args.addressMapUrl ? { addressMapUrl: args.addressMapUrl } : {}),
       phone: args.phone,
       status: "Pending",
       paymentMethod: "Cash",

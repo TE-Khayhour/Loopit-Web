@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
-import { Clock, ClipboardCheck, CookingPot, Truck, CheckCircle, Ban, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
+import { Clock, ClipboardCheck, CookingPot, Truck, CheckCircle, Ban, ChevronRight, ChevronLeft, RotateCcw, ExternalLink } from 'lucide-react';
 import './AdminDashboard.css';
 
 interface IngredientRow {
@@ -407,6 +407,17 @@ function AdminDashboard() {
                     
                     <div className="admin-order-details">
                       <p><strong>Address:</strong> {order.address}</p>
+                      {(order as any).addressMapUrl && (
+                        <a
+                          href={(order as any).addressMapUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="admin-map-link"
+                        >
+                          <ExternalLink size={13} />
+                          View on Google Maps
+                        </a>
+                      )}
                       <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}</p>
                       <div className="admin-order-items">
                         {order.items.map((item) => (
